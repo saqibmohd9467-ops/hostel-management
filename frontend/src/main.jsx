@@ -11,18 +11,20 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Roomtype from './admin/Roomstype.jsx'
 import Home from './public/Home.jsx'
 import Login from './public/login.jsx'
+import Signup from './public/Signup.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-  <BrowserRouter>
-  <Routes>
-     <Route path="/" element={<Home/>}/> 
-     <Route path="/login" element={<Login />} />
-     <Route path="/dashboard" element={<Dashboard/>}/> 
-     <Route path="/rentrooms" element={<Rentroom/>}/> 
-     <Route path="/rooms" element={<Rooms/>}/>
-     <Route path="/roomstypes" element={<Roomtype/>}/>
-  </Routes>
-  </BrowserRouter>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup/>} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/rentrooms" element={<Rentroom />} />
+        <Route path="/rooms" element={<Rooms />} />
+        <Route path="/roomstypes" element={<Roomtype />} />
+      </Routes>
+    </BrowserRouter>
   </StrictMode>
 )

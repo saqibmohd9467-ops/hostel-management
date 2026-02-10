@@ -1,10 +1,11 @@
 import React from 'react'
 import Login from '../public/login'
+import { Link } from 'react-router-dom'
 
 const Header = () => {
-  return (
-    <div>
-        <header className="bg-slate-900 text-white">
+    return (
+        <div>
+            <header className="bg-slate-900 text-white">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
                     {/* Logo */}
@@ -22,17 +23,18 @@ const Header = () => {
 
                     {/* Auth Buttons */}
                     <div className="flex space-x-3">
-                        <button className="px-4 py-2 text-sm rounded-md border border-slate-400 hover:bg-slate-800">
+                        <Link to="/login" className="px-4 py-2 text-sm rounded-md border border-slate-400 hover:bg-slate-800">
                             Login
-                        </button>
-                        <button className="px-4 py-2 text-sm rounded-md bg-blue-600 hover:bg-blue-700">
+                        </Link>
+                        <Link to="/signup" className="px-4 py-2 text-sm rounded-md bg-blue-600 hover:bg-blue-700">
                             Sign Up
-                        </button>
+                        </Link>
                     </div>
                 </div>
-            </header>
-    </div>
-  )
+              
+            </header >
+        </div >
+    )
 }
 
 export default Header
