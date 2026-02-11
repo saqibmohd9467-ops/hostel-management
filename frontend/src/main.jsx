@@ -13,6 +13,12 @@ import Home from './public/Home.jsx'
 import Login from './public/login.jsx'
 import Signup from './public/Signup.jsx'
 import About from './public/About.jsx'
+import Facilities from './public/facilities.jsx'
+import Contact from './public/Contact.jsx'
+import RenterDashboard from './Renter/Renterdashboard.jsx'
+import MyProfile from './Renter/myprofile.jsx'
+import RoomDetails from './Renter/roomdetails.jsx'
+import Payments from './Renter/payment.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -22,10 +28,16 @@ createRoot(document.getElementById('root')).render(
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup/>} />
         <Route path="/about" element={<About/>} />
+        <Route path="/facilities" element={<Facilities />} />
+        <Route path="/contact" element={<Contact />} />
+         <Route path="/renter/dashboard" element={<RenterDashboard />} />
+         <Route path="/myprofile" element={<MyProfile />} />
+         <Route path="/roomdetails" element={<RoomDetails />} />
+         <Route path="/payments" element={<Payments />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/rentrooms" element={<Rentroom />} />
         <Route path="/rooms" element={<Rooms />} />
-        <Route path="/roomstypes" element={<Roomtype />} />
+        <Route path="/roomstypes" element={<Roomtype />} /> 
       </Routes>
     </BrowserRouter>
   </StrictMode>
