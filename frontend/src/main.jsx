@@ -12,6 +12,7 @@ import Roomtype from './admin/Roomstype.jsx'
 import Home from './public/Home.jsx'
 import Login from './public/login.jsx'
 import Signup from './public/Signup.jsx'
+import About from './public/About.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -20,6 +21,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup/>} />
+        <Route path="/about" element={<About/>} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/rentrooms" element={<Rentroom />} />
         <Route path="/rooms" element={<Rooms />} />

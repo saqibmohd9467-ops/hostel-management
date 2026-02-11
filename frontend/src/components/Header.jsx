@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 const Header = () => {
     return (
         <div>
-            <header className="bg-slate-900 text-white">
+            <header className="bg-blue-900 text-white">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
                     {/* Logo */}
@@ -15,10 +15,11 @@ const Header = () => {
 
                     {/* Menu */}
                     <nav className="hidden md:flex space-x-8 text-sm font-medium">
-                        <a href="#" className="hover:text-slate-300">Home</a>
-                        <a href="#" className="hover:text-slate-300">About</a>
-                        <a href="#" className="hover:text-slate-300">Facilities</a>
-                        <a href="#" className="hover:text-slate-300">Contact</a>
+                        {/* <a href="#" >Home</a> */}
+                        <Link to="/" className="hover:text-slate-300">Home</Link>
+                        <Link to="/about" className="hover:text-slate-300">About</Link>
+                        <Link to="/facilities" className="hover:text-slate-300">Facilities</Link>
+                        <Link to="/contact" className="hover:text-slate-300">Contact</Link>
                     </nav>
 
                     {/* Auth Buttons */}
