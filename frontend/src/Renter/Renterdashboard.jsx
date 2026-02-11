@@ -1,27 +1,26 @@
-import React from "react";
+import { Link } from "react-router-dom";
+import {
+  LayoutDashboard,
+  User,
+  BedDouble,
+  CreditCard,
+  MessageSquareWarning,
+  Bell,
+  LogOut,
+} from "lucide-react";
+
 import { FaBed, FaMoneyBillWave, FaExclamationCircle, FaBell } from "react-icons/fa";
+import RenterSidebar from "./RenterSidebar";
 
 const RenterDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
-      
-      {/* Sidebar */}
-      <div className="w-64 bg-blue-600 text-white p-5 hidden md:block">
-        <h2 className="text-2xl font-bold mb-8">Renter Panel</h2>
-        <ul className="space-y-4">
-          <li className="hover:text-gray-200 cursor-pointer">Dashboard</li>
-          <li className="hover:text-gray-200 cursor-pointer">My Profile</li>
-          <li className="hover:text-gray-200 cursor-pointer">Room Details</li>
-          <li className="hover:text-gray-200 cursor-pointer">Payments</li>
-          <li className="hover:text-gray-200 cursor-pointer">Complaints</li>
-          <li className="hover:text-gray-200 cursor-pointer">Notices</li>
-          <li className="hover:text-gray-200 cursor-pointer">Logout</li>
-        </ul>
-      </div>
+
+      <RenterSidebar/>
 
       {/* Main Content */}
       <div className="flex-1 p-6">
-        
+
         {/* Top Bar */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-700">Dashboard</h1>
@@ -30,7 +29,7 @@ const RenterDashboard = () => {
 
         {/* Cards Section */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          
+
           <div className="bg-white p-5 rounded-lg shadow flex items-center space-x-4">
             <FaBed className="text-blue-600 text-3xl" />
             <div>
@@ -111,4 +110,6 @@ const RenterDashboard = () => {
   );
 };
 
-export default RenterDashboard 
+export default RenterDashboard
+
+

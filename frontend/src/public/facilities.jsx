@@ -43,41 +43,44 @@ const facilities = [
 
 const Facilities = () => {
   return (
-    <div className="bg-gray-50 min-h-screen py-12 px-6">
-        <Header/>
-      <div className="max-w-6xl mx-auto">
-        
-        {/* Page Heading */}
-        <h1 className="text-4xl font-bold text-center text-indigo-600 mb-4">
-          Our Hostel Facilities
-        </h1>
-        <p className="text-center text-gray-600 mb-12">
-          We provide modern amenities to ensure a comfortable and secure stay for our students.
-        </p>
+    <>
 
-        {/* Facilities Grid */}
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {facilities.map((facility, index) => (
-            <div
-              key={index}
-              className="bg-white shadow-lg rounded-2xl p-6 text-center hover:shadow-2xl transition duration-300"
-            >
-              <div className="text-indigo-600 flex justify-center mb-4">
-                {facility.icon}
+      <Header />
+      <div className="bg-gray-50 min-h-screen py-12 px-6">
+        <div className="max-w-6xl mx-auto">
+
+          {/* Page Heading */}
+          <h1 className="text-4xl font-bold text-center text-indigo-600 mb-4">
+            Our Hostel Facilities
+          </h1>
+          <p className="text-center text-gray-600 mb-12">
+            We provide modern amenities to ensure a comfortable and secure stay for our students.
+          </p>
+
+          {/* Facilities Grid */}
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {facilities.map((facility, index) => (
+              <div
+                key={index}
+                className="bg-white shadow-lg rounded-2xl p-6 text-center hover:shadow-2xl transition duration-300"
+              >
+                <div className="text-indigo-600 flex justify-center mb-4">
+                  {facility.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-2">
+                  {facility.title}
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  {facility.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-2">
-                {facility.title}
-              </h3>
-              <p className="text-gray-600 text-sm">
-                {facility.description}
-              </p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
+        </div>
       </div>
-      <Footer/>
-    </div>
+        <Footer />
+    </>
 
   );
 };

@@ -1,66 +1,87 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import RenterSidebar from "./RenterSidebar";
+import EditProfileForm from "./EditProfileForm";
+import { User } from "lucide-react";
 
 const MyProfile = () => {
-  // Static data (can be replaced with backend data later)
+  const [isEditing, setIsEditing] = useState(false);
+
   const renter = {
     name: "John Doe",
     email: "john@example.com",
     phone: "9876543210",
     adhar: "1234 5678 9012",
     purpose: "Student",
+    address: "221B Baker Street, Jaipur",
+    joined: "January 2024",
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex justify-center">
-      <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-8">
-        
-        {/* Top Section */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-700">
-            My Profile
-          </h2>
+    <div className="min-h-screen bg-slate-100 flex">
+      <RenterSidebar />
 
-          <Link
-            to="/renter/edit-profile"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+      <div className="flex-1 p-6 md:p-10">
+
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-slate-800 flex items-center gap-3">
+            <User className="text-blue-600" size={28} />
+            My Profile
+          </h1>
+
+          <button
+            onClick={() => setIsEditing(true)}
+            className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition shadow-sm"
           >
             Edit Profile
-          </Link>
+          </button>
         </div>
 
-        {/* Profile Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* If Editing Show Form */}
+        {isEditing ? (
+          <EditProfileForm renter={renter} onCancel={() => setIsEditing(false)} />
+        ) : (
+          <div className="bg-white rounded-xl shadow-md p-8">
 
-          <div>
-            <p className="text-gray-500 text-sm">Full Name</p>
-            <p className="text-lg font-medium text-gray-800">{renter.name}</p>
+            {/* Profile Avatar Section */}
+            <div className="flex items-center gap-6 mb-8">
+              <div className="w-20 h-20 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold">
+                {renter.name.charAt(0)}
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-slate-800">
+                  {renter.name}
+                </h2>
+                <p className="text-slate-500">{renter.email}</p>
+              </div>
+            </div>
+
+            {/* Details Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+              <ProfileItem label="Phone" value={renter.phone} />
+              <ProfileItem label="Aadhaar Number" value={renter.adhar} />
+              <ProfileItem label="Purpose of Stay" value={renter.purpose} />
+              <ProfileItem label="Member Since" value={renter.joined} />
+
+              <div className="md:col-span-2">
+                <ProfileItem label="Address" value={renter.address} />
+              </div>
+
+            </div>
+
           </div>
-
-          <div>
-            <p className="text-gray-500 text-sm">Email</p>
-            <p className="text-lg font-medium text-gray-800">{renter.email}</p>
-          </div>
-
-          <div>
-            <p className="text-gray-500 text-sm">Phone</p>
-            <p className="text-lg font-medium text-gray-800">{renter.phone}</p>
-          </div>
-
-          <div>
-            <p className="text-gray-500 text-sm">Aadhaar Number</p>
-            <p className="text-lg font-medium text-gray-800">{renter.adhar}</p>
-          </div>
-
-          <div className="md:col-span-2">
-            <p className="text-gray-500 text-sm">Purpose of Stay</p>
-            <p className="text-lg font-medium text-gray-800">{renter.purpose}</p>
-          </div>
-
-        </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default MyProfile
+const ProfileItem = ({ label, value }) => (
+  <div>
+    <p className="text-sm text-slate-500">{label}</p>
+    <p className="text-lg font-medium text-slate-800">{value}</p>
+  </div>
+);
+
+export default MyProfile;

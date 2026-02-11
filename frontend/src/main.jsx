@@ -4,8 +4,7 @@ import Dashboard from './admin/dashboard.jsx'
 import Rentroom from './admin/Rentrooms.jsx'
 // import Rooms from './admin/Roomstype.jsx'
 import './index.css'
-import Rented from './admin/Rented.jsx'
-import Sidebar from './components/Sidebar.jsx'
+// import Rented from './admin/Rented.jsx'
 import Rooms from './admin/Rooms.jsx'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Roomtype from './admin/Roomstype.jsx'
@@ -24,20 +23,23 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
+        {/* Public routes  */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup/>} />
-        <Route path="/about" element={<About/>} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/about" element={<About />} />
         <Route path="/facilities" element={<Facilities />} />
         <Route path="/contact" element={<Contact />} />
-         <Route path="/renter/dashboard" element={<RenterDashboard />} />
-         <Route path="/myprofile" element={<MyProfile />} />
-         <Route path="/roomdetails" element={<RoomDetails />} />
-         <Route path="/payments" element={<Payments />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/rentrooms" element={<Rentroom />} />
-        <Route path="/rooms" element={<Rooms />} />
-        <Route path="/roomstypes" element={<Roomtype />} /> 
+        {/* Admin routes  */}
+        <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin/rentrooms" element={<Rentroom />} />
+        <Route path="/admin/rooms" element={<Rooms />} />
+        <Route path="/admin/roomstypes" element={<Roomtype />} />
+        {/* Renter routes  */}
+        <Route path="/renter/dashboard" element={<RenterDashboard />} />
+        <Route path="/renter/profile" element={<MyProfile />} />
+        <Route path="/renter/room-details" element={<RoomDetails />} />
+        <Route path="/renter/payments" element={<Payments />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
