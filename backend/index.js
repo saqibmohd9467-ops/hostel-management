@@ -16,73 +16,161 @@ const db = require("./config/db")
 db()
 
 //  ========= rent Room APIs========================= =======
+// CREATE - Assign room to renter
 app.post("/rentroom", async (req, res) => {
+  try {
+    const {
+      id,          // room id
+      rn,          // renter name
+      mobile,
+      adh,
+      rnadrs,
+      pp,
+      paidrent     // paid rent from frontend
+    } = req.body;
 
-    const roomdata = await room.findOne({ _id: req.body.id })
-    console.log(roomdata);
-    if (!roomdata) return res.json({ msg: "No room found" })
-    let rentstatus = "pending";
-    if (Number(roomdata.roomrent) < Number(req.body.paidroomrent)) {
-        rentstatus = "pending"
+    // Check room exists
+    const roomdata = await room.findById(id);
+    if (!roomdata) {
+      return res.status(404).json({ msg: "No room found" });
     }
-    else if (Number(roomdata.roomrent) > Number(req.body.paidroomrent)) {
-        return res.json({ msg: "Room rent is maximum" })
+
+    const totalRent = Number(roomdata.roomrent);
+    const paidAmount = Number(paidrent);
+
+    // Validation
+    if (paidAmount > totalRent) {
+      return res.status(400).json({ msg: "Paid rent cannot exceed total rent" });
     }
-    else {
-        rentstatus = "paid"
-    }
+
+    const pendingrent = totalRent - paidAmount;
+
+    let rentstatus = pendingrent === 0 ? "paid" : "pending";
+
+    // Create rent entry
     const rm = new rentroom({
-        roomid: req.body.id,
-        roomno: roomdata.roomno,
-        rentername: req.body.rn,
-        paidroomrent: req.body.roomrent,
-        renteradhar: req.body.adh,
-        rentstatus: rentstatus,
-        renterno: req.body.mobile,
-        renteraddress: req.body.rnadrs,
-        renterpurpose: req.body.pp,
-    })
+      roomid: id,
+      roomno: roomdata.roomno,
+      rentername: rn,
+      paidroomrent: paidAmount,
+      totalrent: totalRent,
+      pendingrent: pendingrent,
+      renteradhar: adh,
+      rentstatus: rentstatus,
+      renterno: mobile,
+      renteraddress: rnadrs,
+      renterpurpose: pp,
+    });
+
     await rm.save();
-    res.json({ msg: "Rent Room added" })
-})
 
+    res.status(201).json({ msg: "Rent Room added successfully" });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// READ - Get all rent records
 app.get("/rentroom", async (req, res) => {
-    const aa = await rentroom.find();
-    res.json(aa)
-})
+  try {
+    const data = await rentroom.find();
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
+// READ - Get single rent record by id
 app.get("/rentroom/:id", async (req, res) => {
-    const rr = await rentroom.findById(req.params.id);
-    res.json(rr)
-})
+  try {
+    const data = await rentroom.findById(req.params.id);
 
+    if (!data) {
+      return res.status(404).json({ msg: "Record not found" });
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+// UPDATE - Update rent record
+app.put("/updaterentroom/:id", async (req, res) => {
+  try {
+    const {
+      rn,
+      mobile,
+      adh,
+      rnadrs,
+      pp,
+      paidrent
+    } = req.body;
+
+    const existing = await rentroom.findById(req.params.id);
+    if (!existing) {
+      return res.status(404).json({ msg: "Record not found" });
+    }
+
+    const totalRent = Number(existing.totalrent);
+    const paidAmount = Number(paidrent);
+
+    if (paidAmount > totalRent) {
+      return res.status(400).json({ msg: "Paid rent cannot exceed total rent" });
+    }
+
+    const pendingrent = totalRent - paidAmount;
+    const rentstatus = pendingrent === 0 ? "paid" : "pending";
+
+    const updated = await rentroom.findByIdAndUpdate(
+      req.params.id,
+      {
+        rentername: rn,
+        renterno: mobile,
+        renteradhar: adh,
+        renteraddress: rnadrs,
+        renterpurpose: pp,
+        paidroomrent: paidAmount,
+        pendingrent: pendingrent,
+        rentstatus: rentstatus,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ msg: "Rent Room updated", data: updated });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE - Remove rent record
 app.delete("/rentroom/:id", async (req, res) => {
-    await rentroom.findByIdAndDelete(req.params.id);
-    res.json({ msg: "Rent Room Deleted" })
-})
+  try {
+    const deleted = await rentroom.findByIdAndDelete(req.params.id);
 
-app.put("/rentroom/:id", async (req, res) => {
-    await rentroom.findByIdAndUpdate(req.params.id, {
-        roomid: req.body.id,
-        rentername: req.body.rn,
-        renteradhar: req.body.adh,
-        renterno: req.body.nmbr,
-        renteraddress: req.body.rnadrs,
-        renterpurpose: req.body.pp
-    })
+    if (!deleted) {
+      return res.status(404).json({ msg: "Record not found" });
+    }
 
-    res.json({ msg: "Rent Room Updated" })
-})
+    res.status(200).json({ msg: "Rent record deleted successfully" });
 
-app.get("/rentroom/:id", async (req, res) => {
-    const dd = await rentroom.findById(req.params.id)
-    res.json(dd)
-})
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
-// ===================== Room APIs===============//
 
+// ------------------------------ Room APIs ------------------------------
+
+// creating new room 
 app.post("/room", async (req, res) => {
+    const existingRoom = await room.findOne({ roomno: req.body.rm })
+    if (existingRoom) return res.json({ msg: `${req.body.rm} already exists` })
     const rm = new room({
         roomno: req.body.rm,
         roomtype: req.body.rt,
@@ -93,63 +181,70 @@ app.post("/room", async (req, res) => {
     res.json({ msg: "Room added" })
 })
 
+// getting all rooms
 app.get("/room", async (req, res) => {
     const rrr = await room.find();
     res.json(rrr)
 })
 
+// getting single room 
 app.get("/room/:id", async (req, res) => {
     const rm = await room.findById(req.params.id);
     res.json(rm)
 })
 
+// deleting room 
 app.delete("/room/:id", async (req, res) => {
     await room.findByIdAndDelete(req.params.id)
-    res.json({ msg: "Record Deleted" })
+    res.json({ msg: "Room Deleted" })
 })
-
+// updating room 
 app.put("/room/:id", async (req, res) => {
     await room.findByIdAndUpdate(req.params.id, {
-        roomno: req.body.rm,
-        roomtype: req.body.rt,
-        // rentername:req.body.rnt,
-        roomstatus: req.body.rtt,
-        roomrent: req.body.rmst
+        roomno:  req.body.roomno,
+        roomtype: req.body.roomtype,
+        roomstatus: req.body.roomstatus,
+        roomrent: req.body.roomrent
     })
-    res.json({ msg: "Record Updated" })
+    res.json({ msg: "Room Updated" })
 })
 
 
-// ====APIs Roomtype=====
-
+// ------------------ APIs Roomtype  ------------------
+// creating roomtype api 
 app.post("/roomtype", async (req, res) => {
+    const existingRoomType = await roomtype.findOne({ roomtype: req.body.rt })
+    if (existingRoomType) return res.json({ msg: `${req.body.rt} already exists` })
     const rm = new roomtype({
         roomtype: req.body.rt
     })
     await rm.save();
-    res.json({ msg: "Room added" })
+    res.json({ msg: "RoomType added" })
 })
+// updating roomtype api 
 app.put("/roomtype/:id", async (req, res) => {
     await roomtype.findByIdAndUpdate(req.params.id, {
         roomtype: req.body.rt,
     })
-    res.json({ msg: "Record Updated" })
+    res.json({ msg: "Roomtype Updated" })
 })
 
-
+// getting all roomtypes 
 app.get("/roomtype", async (req, res) => {
     const rt = await roomtype.find();
     res.json(rt)
 })
 
+// getting single roomtypes
 app.get("/roomtype/:id", async (req, res) => {
     const rm = await roomtype.findById(req.params.id);
     res.json(rm)
 })
 
+// deleting roomtype api 
 app.delete("/roomtype/:id", async (req, res) => {
     await roomtype.findByIdAndDelete(req.params.id)
-    res.json({ msg: "Record Deleted" })
+    res.json({ msg: "Roomtype Deleted" })
 })
 
 

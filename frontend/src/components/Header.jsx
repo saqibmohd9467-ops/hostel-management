@@ -4,13 +4,15 @@ import { Link } from 'react-router-dom'
 
 const Header = () => {
     return (
-        <div>
-            <header className="bg-red-900 text-white">
+        <div className='sticky top-0 z-50'>
+            <header className="bg-blue-900 text-white ">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
                     {/* Logo */}
                     <div className="text-xl font-bold tracking-wide">
-                        Verma Heights
+                        <Link to="/"> 
+                            Verma Heights
+                        </Link>
                     </div>
 
                     {/* Menu */}
@@ -32,7 +34,7 @@ const Header = () => {
                         </Link>
                     </div>
                 </div>
-              
+
             </header >
         </div >
     )

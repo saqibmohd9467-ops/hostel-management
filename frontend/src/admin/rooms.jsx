@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/AdminSidebar";
 import Roomform from "./roomform";
+import { showToast } from "../components/Toast";
 
 const Rooms = () => {
     const [rooms, setrooms] = useState([]);
     const [showform, setshowform] = useState(false);
     const [sdata, setsdata] = useState({});
     const [editMode, seteditMode] = useState(false);
-
+    
     const getrooms = async () => {
         const re = await fetch("http://localhost:5000/room", {
             method: "GET",
             headers: { "Content-Type": "Application/json" },
         });
         const data = await re.json();
-        console.log(data);
         setrooms(data);
         setshowform(false);
     };
-
+    
+    
     useEffect(() => {
         getrooms();
     }, []);
@@ -29,10 +30,10 @@ const Rooms = () => {
             headers: { "Content-Type": "Application/json" },
         });
         const data = await res.json();
-        console.log(data);
+        showToast(data.msg, "success", "top-center")
         getrooms();
     };
-
+    
     // getting single room data 
     const singleroom = async (id) => {
         seteditMode(true)
@@ -41,12 +42,11 @@ const Rooms = () => {
             headers: { "Content-Type": "Application/json" }
         })
         const data = await re.json()
-        console.log(data)
         setsdata(data)
         setshowform(true)
     }
 
-   
+    
 
     return (
         <div className="min-h-screen bg-gray-100 flex">

@@ -18,10 +18,12 @@ import RenterDashboard from './Renter/Renterdashboard.jsx'
 import MyProfile from './Renter/myprofile.jsx'
 import RoomDetails from './Renter/roomdetails.jsx'
 import Payments from './Renter/payment.jsx'
+import Toast from './components/Toast.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
+    <Toast/>
       <Routes>
         {/* Public routes  */}
         <Route path="/" element={<Home />} />

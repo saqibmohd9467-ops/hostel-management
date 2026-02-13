@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/AdminSidebar";
 import Roomform from "./roomtypeform";
+import { showToast } from "../components/Toast";
 
 const Roomtype = () => {
     const [room, setroom] = useState([]);
@@ -36,13 +37,15 @@ const Roomtype = () => {
         seteditMode(true);
     };
 
+    // deleting roomtype 
+
     const deleteroomtype = async (id) => {
         const res = await fetch(`http://localhost:5000/roomtype/${id}`, {
             method: "DELETE",
             headers: { "Content-Type": "Application/json" },
         });
         const data = await res.json();
-        console.log(data);
+        showToast(data.msg,"success", "top-center")
         getroomtype();
     };
 

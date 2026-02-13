@@ -2,176 +2,215 @@ import { useState, useEffect } from "react";
 
 const Rentroomform = ({ onclose, isedit, sdata }) => {
   const [roomid, setroomid] = useState("");
-  const [rentername, setrentername] = useState("");
-  const [address, setaddress] = useState("");
-  const [mobileno, setmobileno] = useState("");
+  const [name, setname] = useState("");
+  const [mobile, setmobile] = useState("");
   const [aadhaar, setaadhaar] = useState("");
+  const [address, setaddress] = useState("");
   const [purpose, setpurpose] = useState("");
-  const [roomrent, setroomrent] = useState("");
-  const [rooms, setroom] = useState([]);
+  const [totalrent, settotalrent] = useState(0);
+  const [paidrent, setpaidrent] = useState(0);
+  const [pendingrent, setpendingrent] = useState(0);
+  const [rooms, setrooms] = useState([]);
+
+  // Fetch rooms
+  const getrooms = async () => {
+    const res = await fetch("http://localhost:5000/room");
+    const data = await res.json();
+    // console.log(data)
+    setrooms(data);
+  };
 
   useEffect(() => {
+    getrooms();
+  }, []);
+
+  // Fill data when editing
+  useEffect(() => {
     if (isedit && sdata) {
-      setrentername(sdata.rentername);
       setroomid(sdata.roomid);
-      setaddress(sdata.address);
-      setmobileno(sdata.mobileno);
+      setname(sdata.name);
+      setmobile(sdata.mobile);
       setaadhaar(sdata.aadhaar);
+      setaddress(sdata.address);
       setpurpose(sdata.purpose);
-      setroomrent(sdata.roomrent);
+      settotalrent(sdata.totalrent);
+      setpaidrent(sdata.paidrent);
+      setpendingrent(sdata.pendingrent);
     }
   }, [isedit, sdata]);
 
-  const addrentroom = async (e) => {
-    e.preventDefault();
-    await fetch("http://localhost:5000/rentroom", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: roomid,
-        rn: rentername,
-        adh: aadhaar,
-        mobile: mobileno,
-        rnadrs: address,
-        pp: purpose,
-        roomrent,
-      }),
-    });
-    onclose();
-  };
-
-  const updaterentroom = async (e) => {
-    e.preventDefault();
-    await fetch(`http://localhost:5000/updaterentroom/${sdata._id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: roomid,
-        rn: rentername,
-        adh: aadhaar,
-        mobile: mobileno,
-        rnadrs: address,
-        pp: purpose,
-        roomrent,
-      }),
-    });
-    onclose();
-  };
-
-  const getrentroom = async () => {
-    const re = await fetch("http://localhost:5000/room");
-    const data = await re.json();
-    setroom(data);
-  };
-
+  // Auto set total rent when room selected
   useEffect(() => {
-    getrentroom();
-  }, []);
+    if (roomid) {
+      const selectedRoom = rooms.find((r) => r._id === roomid);
+      if (selectedRoom) {
+        settotalrent(selectedRoom.roomrent);
+      }
+    }
+  }, [roomid, rooms]);
+
+  // Calculate pending rent
+  useEffect(() => {
+    const pending = Number(totalrent) - Number(paidrent);
+    setpendingrent(pending >= 0 ? pending : 0);
+  }, [paidrent, totalrent]);
+
+  // Submit function
+  const handlesubmit = async (e) => {
+    alert(isedit)
+    e.preventDefault();
+
+    const url = isedit
+      ? `http://localhost:5000/updaterentroom/${sdata._id}`
+      : "http://localhost:5000/rentroom";
+
+    const method = isedit ? "PUT" : "POST";
+
+    await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        roomid,
+        name,
+        mobile,
+        aadhaar,
+        address,
+        purpose,
+        totalrent,
+        paidrent,
+        pendingrent,
+      }),
+    });
+
+    onclose();
+  };
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-xl rounded-xl shadow-lg p-6 relative">
-        
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">
-            {isedit ? "Update Rent Room" : "Assign Rent Room"}
-          </h2>
-          <button
-            onClick={onclose}
-            className="text-gray-500 hover:text-red-500 text-lg"
-          >
-            ✕
-          </button>
-        </div>
+      <div className="bg-white w-full max-w-xl rounded-xl shadow-lg p-6">
 
-        {/* Form */}
-        <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          
+        <h2 className="text-xl font-semibold mb-6">
+          {isedit ? "Update Rent Details" : "Assign Rent Room"}
+        </h2>
+
+        <form onSubmit={handlesubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          {/* Select Room */}
           <div className="col-span-2">
-            <label className="form-label">Select Room</label>
+            <label>Select Room No</label>
             <select
-              className="form-input"
+              className="w-full border p-2 rounded"
               value={roomid}
               onChange={(e) => setroomid(e.target.value)}
+              disabled={isedit}
+              required
             >
               <option value="">-- Select Room --</option>
-              {rooms.map((x) => (
-                <option key={x._id} value={x._id}>
-                  Room {x.roomno}
+              {rooms.map((room) => (
+                <option key={room._id} value={room._id}>
+                  Room {room.roomno}
                 </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="form-label">Renter Name</label>
+            <label>Name</label>
             <input
-              className="form-input"
-              value={rentername}
-              onChange={(e) => setrentername(e.target.value)}
-              placeholder="Enter name"
+              className="w-full border p-2 rounded"
+              placeholder="Enter renter name"
+              value={name}
+              onChange={(e) => setname(e.target.value)}
+              required
             />
           </div>
 
           <div>
-            <label className="form-label">Mobile No.</label>
+            <label>Mobile</label>
             <input
-              className="form-input"
-              value={mobileno}
-              onChange={(e) => setmobileno(e.target.value)}
-              placeholder="Enter mobile"
-            />
-          </div>
-
-          <div className="col-span-2">
-            <label className="form-label">Address</label>
-            <input
-              className="form-input"
-              value={address}
-              onChange={(e) => setaddress(e.target.value)}
-              placeholder="Enter address"
+              className="w-full border p-2 rounded"
+              placeholder="Enter mobile number"
+              value={mobile}
+              onChange={(e) => setmobile(e.target.value)}
+              required
             />
           </div>
 
           <div>
-            <label className="form-label">Aadhaar No.</label>
+            <label>Aadhaar</label>
             <input
-              className="form-input"
+              className="w-full border p-2 rounded"
+              placeholder="Enter Aadhaar number"
               value={aadhaar}
               onChange={(e) => setaadhaar(e.target.value)}
-              placeholder="Enter Aadhaar"
+              required
             />
           </div>
 
           <div>
-            <label className="form-label">Purpose</label>
+            <label>Address</label>
             <input
-              className="form-input"
-              value={purpose}
-              onChange={(e) => setpurpose(e.target.value)}
-              placeholder="Purpose"
+              className="w-full border p-2 rounded"
+              placeholder="Enter address"
+              value={address}
+              onChange={(e) => setaddress(e.target.value)}
+              required
             />
           </div>
 
-          <div className="col-span-2">
-            <label className="form-label">Room Rent</label>
+          <div>
+            <label>Purpose</label>
             <input
-              className="form-input"
-              value={roomrent}
-              onChange={(e) => setroomrent(e.target.value)}
-              placeholder="Enter rent"
+              className="w-full border p-2 rounded"
+              placeholder="Enter purpose"
+              value={purpose}
+              onChange={(e) => setpurpose(e.target.value)}
+              required
             />
           </div>
+
+          {/* Total Rent (Disabled) */}
+          <div>
+            <label>Total Rent</label>
+            <input
+              className="w-full border p-2 rounded bg-gray-100"
+              value={totalrent}
+              disabled
+            />
+          </div>
+
+          {/* Paid Rent */}
+          <div>
+            <label>Paid Rent</label>
+            <input
+              type="number"
+              className="w-full border p-2 rounded"
+              placeholder="Enter paid rent"
+              value={paidrent}
+              onChange={(e) => setpaidrent(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Pending Rent */}
+          {/* <div className="col-span-2">
+            <label>Pending Rent</label>
+            <input
+              className="w-full border p-2 rounded bg-gray-100"
+              value={pendingrent}
+              disabled
+            />
+          </div> */}
 
           <div className="col-span-2 mt-4">
             <button
-              onClick={isedit ? updaterentroom : addrentroom}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium"
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded"
             >
-              {isedit ? "Update Room" : "Assign Room"}
+              {isedit ? "Update Details" : "Assign Room"}
             </button>
           </div>
+
         </form>
       </div>
     </div>
