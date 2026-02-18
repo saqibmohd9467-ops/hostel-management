@@ -46,7 +46,7 @@ const Roomform = ({ onclose, isedit, singledata, getroomtype }) => {
     })
     const data = await re.json();
     showToast(data.msg)
-    if (data.msg === "Record Updated") {
+    if (data.msg === "Roomtype Updated") {
       getroomtype()
     }
   }

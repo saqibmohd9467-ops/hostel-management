@@ -20,20 +20,27 @@ db()
 app.post("/rentroom", async (req, res) => {
   try {
     const {
-      id,          // room id
-      rn,          // renter name
+      roomid,
+      name,
       mobile,
-      adh,
-      rnadrs,
-      pp,
-      paidrent     // paid rent from frontend
+      aadhaar,
+      address,
+      purpose,
+      // totalrent,
+      paidrent,
     } = req.body;
 
     // Check room exists
-    const roomdata = await room.findById(id);
+    const roomdata = await room.findById(roomid);
     if (!roomdata) {
       return res.status(404).json({ msg: "No room found" });
     }
+
+
+    //Check room availability
+
+    const booked = await rentroom.findOne({ roomid })
+    if (booked) return res.json({ msg: "Room already occupied" })
 
     const totalRent = Number(roomdata.roomrent);
     const paidAmount = Number(paidrent);
@@ -49,25 +56,33 @@ app.post("/rentroom", async (req, res) => {
 
     // Create rent entry
     const rm = new rentroom({
-      roomid: id,
+      roomid: roomid,
       roomno: roomdata.roomno,
-      rentername: rn,
-      paidroomrent: paidAmount,
+      name: name,
+      paidrent: paidAmount,
       totalrent: totalRent,
       pendingrent: pendingrent,
-      renteradhar: adh,
+      aadhar: aadhaar,
       rentstatus: rentstatus,
-      renterno: mobile,
-      renteraddress: rnadrs,
-      renterpurpose: pp,
+      mobile: mobile,
+      address: address,
+      purpose: purpose,
     });
 
     await rm.save();
 
-    res.status(201).json({ msg: "Rent Room added successfully" });
+
+    // update status
+    roomdata.roomstatus = "occupied";
+
+    // save in DB
+    await roomdata.save();
+
+    res.status(201).json({ msg: "Renter assigned successfully" });
 
   } catch (error) {
     res.status(500).json({ error: error.message });
+    console.log(error.message)
   }
 });
 
@@ -169,86 +184,90 @@ app.delete("/rentroom/:id", async (req, res) => {
 
 // creating new room 
 app.post("/room", async (req, res) => {
-    const existingRoom = await room.findOne({ roomno: req.body.rm })
-    if (existingRoom) return res.json({ msg: `${req.body.rm} already exists` })
-    const rm = new room({
-        roomno: req.body.rm,
-        roomtype: req.body.rt,
-        roomstatus: req.body.rtt,
-        roomrent: req.body.rmst
-    })
-    await rm.save();
-    res.json({ msg: "Room added" })
+  const existingRoom = await room.findOne({ roomno: req.body.rm })
+  if (existingRoom) return res.json({ msg: `${req.body.rm} already exists` })
+  const rm = new room({
+    roomno: req.body.rm,
+    roomtype: req.body.rt,
+    roomstatus: req.body.rtt,
+    roomrent: req.body.rmst
+  })
+  await rm.save();
+  res.json({ msg: "Room added" })
 })
 
 // getting all rooms
 app.get("/room", async (req, res) => {
-    const rrr = await room.find();
-    res.json(rrr)
+  const rrr = await room.find();
+  res.json(rrr)
+})
+app.get("/room/:roomstatus", async (req, res) => {
+  const rrr = await room.find({roomstatus:req.params.roomstatus});
+  res.json(rrr)
 })
 
 // getting single room 
 app.get("/room/:id", async (req, res) => {
-    const rm = await room.findById(req.params.id);
-    res.json(rm)
+  const rm = await room.findById(req.params.id);
+  res.json(rm)
 })
 
 // deleting room 
 app.delete("/room/:id", async (req, res) => {
-    await room.findByIdAndDelete(req.params.id)
-    res.json({ msg: "Room Deleted" })
+  await room.findByIdAndDelete(req.params.id)
+  res.json({ msg: "Room Deleted" })
 })
 // updating room 
 app.put("/room/:id", async (req, res) => {
-    await room.findByIdAndUpdate(req.params.id, {
-        roomno:  req.body.roomno,
-        roomtype: req.body.roomtype,
-        roomstatus: req.body.roomstatus,
-        roomrent: req.body.roomrent
-    })
-    res.json({ msg: "Room Updated" })
+  await room.findByIdAndUpdate(req.params.id, {
+    roomno: req.body.roomno,
+    roomtype: req.body.roomtype,
+    roomstatus: req.body.roomstatus,
+    roomrent: req.body.roomrent
+  })
+  res.json({ msg: "Room Updated" })
 })
 
 
 // ------------------ APIs Roomtype  ------------------
 // creating roomtype api 
 app.post("/roomtype", async (req, res) => {
-    const existingRoomType = await roomtype.findOne({ roomtype: req.body.rt })
-    if (existingRoomType) return res.json({ msg: `${req.body.rt} already exists` })
-    const rm = new roomtype({
-        roomtype: req.body.rt
-    })
-    await rm.save();
-    res.json({ msg: "RoomType added" })
+  const existingRoomType = await roomtype.findOne({ roomtype: req.body.rt })
+  if (existingRoomType) return res.json({ msg: `${req.body.rt} already exists` })
+  const rm = new roomtype({
+    roomtype: req.body.rt
+  })
+  await rm.save();
+  res.json({ msg: "RoomType added" })
 })
 // updating roomtype api 
 app.put("/roomtype/:id", async (req, res) => {
-    await roomtype.findByIdAndUpdate(req.params.id, {
-        roomtype: req.body.rt,
-    })
-    res.json({ msg: "Roomtype Updated" })
+  await roomtype.findByIdAndUpdate(req.params.id, {
+    roomtype: req.body.rt,
+  })
+  res.json({ msg: "Roomtype Updated" })
 })
 
 // getting all roomtypes 
 app.get("/roomtype", async (req, res) => {
-    const rt = await roomtype.find();
-    res.json(rt)
+  const rt = await roomtype.find();
+  res.json(rt)
 })
 
 // getting single roomtypes
 app.get("/roomtype/:id", async (req, res) => {
-    const rm = await roomtype.findById(req.params.id);
-    res.json(rm)
+  const rm = await roomtype.findById(req.params.id);
+  res.json(rm)
 })
 
 // deleting roomtype api 
 app.delete("/roomtype/:id", async (req, res) => {
-    await roomtype.findByIdAndDelete(req.params.id)
-    res.json({ msg: "Roomtype Deleted" })
+  await roomtype.findByIdAndDelete(req.params.id)
+  res.json({ msg: "Roomtype Deleted" })
 })
 
 
 
 app.listen(PORT, () => {
-    console.log("Server running on port" + PORT)
+  console.log("Server running on port" + PORT)
 })

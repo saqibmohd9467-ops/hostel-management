@@ -14,7 +14,7 @@ const Rentroomform = ({ onclose, isedit, sdata }) => {
 
   // Fetch rooms
   const getrooms = async () => {
-    const res = await fetch("http://localhost:5000/room");
+    const res = await fetch("http://localhost:5000/room/available");
     const data = await res.json();
     // console.log(data)
     setrooms(data);
@@ -57,7 +57,6 @@ const Rentroomform = ({ onclose, isedit, sdata }) => {
 
   // Submit function
   const handlesubmit = async (e) => {
-    alert(isedit)
     e.preventDefault();
 
     const url = isedit
@@ -66,7 +65,7 @@ const Rentroomform = ({ onclose, isedit, sdata }) => {
 
     const method = isedit ? "PUT" : "POST";
 
-    await fetch(url, {
+   const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -82,7 +81,12 @@ const Rentroomform = ({ onclose, isedit, sdata }) => {
       }),
     });
 
-    onclose();
+    const data = await res.json()
+    alert(data.msg)
+    if(data.msg==="Renter assigned successfully"){
+      onclose();
+    }
+
   };
 
   return (

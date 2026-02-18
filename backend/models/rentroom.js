@@ -7,6 +7,7 @@ const schema = mongoose.Schema({
     address: String,
     aadhar: String,
     purpose: String,
+    rentstatus: String,
     paidrent: Number,
     totalrent: Number,
     pendingrent: Number

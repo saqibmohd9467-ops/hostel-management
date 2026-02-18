@@ -42,6 +42,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/renter/profile" element={<MyProfile />} />
         <Route path="/renter/room-details" element={<RoomDetails />} />
         <Route path="/renter/payments" element={<Payments />} />
+        <Route path='*' element={<h1 className='text-center text-3xl'>Not found</h1>}/>
       </Routes>
     </BrowserRouter>
   </StrictMode>
