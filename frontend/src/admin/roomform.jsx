@@ -36,6 +36,7 @@ const Roomform = ({ onclose, sdata, isedit, getrooms }) => {
 
   useEffect(() => {
     if (isedit && sdata) {
+      console.log("sdata",isedit)
       setroomno(sdata.roomno)
       setroomtype(sdata.roomtype)
       setroomstatus(sdata.roomstatus)
@@ -138,7 +139,7 @@ const Roomform = ({ onclose, sdata, isedit, getrooms }) => {
                 className="w-full px-4 py-2 border rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 required
               >
-                <option value="">SKelect room type</option>
+                <option value="">Select room type</option>
                 {roomtypedata.map((x, i) => (
                   <option key={i} value={x.roomtype}>
                     {x.roomtype}

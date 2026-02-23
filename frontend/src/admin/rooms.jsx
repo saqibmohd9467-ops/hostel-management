@@ -37,11 +37,12 @@ const Rooms = () => {
     // getting single room data 
     const singleroom = async (id) => {
         seteditMode(true)
-        const re = await fetch(`http://localhost:5000/room/${id}`, {
+        const re = await fetch(`http://localhost:5000/room/single/${id}`, {
             method: "GET",
             headers: { "Content-Type": "Application/json" }
         })
         const data = await re.json()
+        console.log("fff",data)
         setsdata(data)
         setshowform(true)
     }
@@ -64,7 +65,7 @@ const Rooms = () => {
                     </h1>
 
                     <button
-                        onClick={() => setshowform(true)}
+                        onClick={() => {setshowform(true);seteditMode(false)}}
                         className="bg-blue-600 text-white px-5 py-2 rounded-lg shadow hover:bg-blue-700 transition"
                     >
                         + Add Room

@@ -202,12 +202,13 @@ app.get("/room", async (req, res) => {
   res.json(rrr)
 })
 app.get("/room/:roomstatus", async (req, res) => {
-  const rrr = await room.find({roomstatus:req.params.roomstatus});
+  const rrr = await room.find({ roomstatus: req.params.roomstatus });
   res.json(rrr)
 })
 
 // getting single room 
-app.get("/room/:id", async (req, res) => {
+app.get("/room/single/:id", async (req, res) => {
+  console.log("test", req.params.id)
   const rm = await room.findById(req.params.id);
   res.json(rm)
 })
@@ -217,6 +218,7 @@ app.delete("/room/:id", async (req, res) => {
   await room.findByIdAndDelete(req.params.id)
   res.json({ msg: "Room Deleted" })
 })
+
 // updating room 
 app.put("/room/:id", async (req, res) => {
   await room.findByIdAndUpdate(req.params.id, {

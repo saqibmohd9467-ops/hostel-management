@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const Rentroomform = ({ onclose, isedit, sdata }) => {
@@ -27,17 +28,18 @@ const Rentroomform = ({ onclose, isedit, sdata }) => {
   // Fill data when editing
   useEffect(() => {
     if (isedit && sdata) {
+      console.log(sdata.roomid)
       setroomid(sdata.roomid);
       setname(sdata.name);
       setmobile(sdata.mobile);
-      setaadhaar(sdata.aadhaar);
+      setaadhaar(sdata.aadhar);
       setaddress(sdata.address);
       setpurpose(sdata.purpose);
       settotalrent(sdata.totalrent);
       setpaidrent(sdata.paidrent);
       setpendingrent(sdata.pendingrent);
     }
-  }, [isedit, sdata]);
+  }, [isedit]);
 
   // Auto set total rent when room selected
   useEffect(() => {
@@ -54,6 +56,8 @@ const Rentroomform = ({ onclose, isedit, sdata }) => {
     const pending = Number(totalrent) - Number(paidrent);
     setpendingrent(pending >= 0 ? pending : 0);
   }, [paidrent, totalrent]);
+
+
 
   // Submit function
   const handlesubmit = async (e) => {
@@ -91,7 +95,8 @@ const Rentroomform = ({ onclose, isedit, sdata }) => {
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-xl rounded-xl shadow-lg p-6">
+      <div className="bg-white relative w-full max-w-xl rounded-xl shadow-lg p-6">
+        <X onClick={onclose} className="absolute right-5 top-5 "/>
 
         <h2 className="text-xl font-semibold mb-6">
           {isedit ? "Update Rent Details" : "Assign Rent Room"}
@@ -101,12 +106,12 @@ const Rentroomform = ({ onclose, isedit, sdata }) => {
 
           {/* Select Room */}
           <div className="col-span-2">
-            <label>Select Room No</label>
+            <label>Select Room</label>
             <select
               className="w-full border p-2 rounded"
               value={roomid}
               onChange={(e) => setroomid(e.target.value)}
-              disabled={isedit}
+              // disabled={isedit}
               required
             >
               <option value="">-- Select Room --</option>
